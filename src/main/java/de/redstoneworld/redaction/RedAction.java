@@ -95,10 +95,12 @@ public final class RedAction extends JavaPlugin {
     public void execute(Action action, Player player, Map<String, String> replacements) {
         boolean wasOp = player.isOp();
         PermissionAttachment perm = player.addAttachment(this, "*", true);
+        String sendCommandFeedback = player.getWorld().getGameRuleValue("sendCommandFeedback");
         try {
             if (!wasOp) {
                 player.setOp(true);
             }
+            player.getWorld().setGameRuleValue("sendCommandFeedback", String.valueOf(action.isOutputShown()));
             for (String command : action.getCommands()) {
                 String replacedCommand = command;
                 for (Map.Entry<String, String> replacement : replacements.entrySet()) {
@@ -111,6 +113,7 @@ public final class RedAction extends JavaPlugin {
                 player.setOp(false);
             }
             player.removeAttachment(perm);
+            player.getWorld().setGameRuleValue("sendCommandFeedback", sendCommandFeedback);
         }
     }
 }

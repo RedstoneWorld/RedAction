@@ -13,7 +13,7 @@ public class Action {
     private final Condition condition;
     private final Material object;
     private final List<String> commands;
-    private final boolean output;
+    private final boolean outputShown;
     private final ClickType click;
     private final BlockFace direction;
     private final int damage;
@@ -30,7 +30,7 @@ public class Action {
         this.condition = Condition.valueOf(config.getString("condition", "UNKNOWN").toUpperCase());
         this.object = Material.valueOf(config.getString("object", "UNKNOWN").toUpperCase());
         this.commands = config.getStringList("commands");
-        this.output = config.getBoolean("output", true);
+        this.outputShown = config.getBoolean("output", true);
         if (config.contains("click", true)) {
             this.click = ClickType.valueOf(config.getString("click").toUpperCase());
         } else {
