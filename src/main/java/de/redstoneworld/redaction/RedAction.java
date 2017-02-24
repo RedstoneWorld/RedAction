@@ -7,7 +7,9 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
+import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionAttachment;
+import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
@@ -18,8 +20,8 @@ import java.util.logging.Level;
 
 public final class RedAction extends JavaPlugin {
 
-    Map<Condition, Map<Material, List<String>>> actionTrigger = new HashMap<>();
-    Map<String, Action> actions = new HashMap<>();
+    private Map<Condition, Map<Material, List<String>>> actionTrigger;
+    private Map<String, Action> actions;
 
     @Override
     public void onEnable() {
@@ -31,6 +33,9 @@ public final class RedAction extends JavaPlugin {
     public void loadConfig() {
         saveDefaultConfig();
         reloadConfig();
+
+        actionTrigger = new HashMap<>();
+        actions = new HashMap<>();
 
         ConfigurationSection actionSection = getConfig().getConfigurationSection("actions");
         for (String actionName : actionSection.getKeys(false)) {
@@ -47,6 +52,9 @@ public final class RedAction extends JavaPlugin {
         actionTrigger.putIfAbsent(action.getCondition(), new HashMap<>());
         actionTrigger.get(action.getCondition()).putIfAbsent(action.getObject(), new ArrayList<>());
         actionTrigger.get(action.getCondition()).get(action.getObject()).add(action.getName().toLowerCase());
+        try {
+            getServer().getPluginManager().addPermission(new Permission("rwm.redaction.actions." + action.getName().toLowerCase(), PermissionDefault.FALSE));
+        } catch (IllegalArgumentException ignored) {}
     }
 
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
