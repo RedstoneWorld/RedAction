@@ -1,0 +1,42 @@
+actions:
+# <Action-Name, zum Beispiel: "B12" oder "Test">
+  default-action:
+#   Anzahl an Befehle nicht begrenzt, in selber Reihenfolge wie angebene ausgeführt und mit allen Rechten
+#   Kann folgende Variablen enthalten:
+#   %world% - Name der Welt
+#   %x% - X position des Spielers (ohne Nachkommastellen)
+#   %y% - y position des Spielers (ohne Nachkommastellen)
+#   %z% - z position des Spielers (ohne Nachkommastellen)
+#   %exactx% - Exakte X position des Spielers (mit Nachkommastellen)
+#   %exacty% - Exakte y position des Spielers (mit Nachkommastellen)
+#   %exactz% - Exakte z position des Spielers (mit Nachkommastellen)
+#   Wenn condition "block" ist:
+#   %blockx% - X position des geklickten Blocks (ohne Nachkommastellen)
+#   %blocky% - y position des geklickten Blocks (ohne Nachkommastellen)
+#   %blockz% - z position des geklickten Blocks (ohne Nachkommastellen)
+#   Wenn Block in eine Richtung zeigen kann:
+#   %direction% - Name der Richtung in die der Block zeigt
+    commands:
+    - befehl1
+    - befehl2 mit argumente
+#   Soll der Befehl seinen Text anzeigen oder nicht?
+    output: false
+#   click: "right" oder "left" = Linksklick / Rechtsklick
+    click: right
+#   condition: "hand", "offhand" oder "block"
+#   = zu definieren ist das Item in der Hand oder den Block, auf den man klickt
+    condition: block
+#   Ob die normale Click-Aktion geblockt werden soll oder nicht. (Default: false)
+    cancel: true
+#   Block- oder Item-Definition:
+    object: trapped_chest
+#   Richtung in die der Block zeigt (ignoriert wenn er keine Richtung hat)
+    direction: south
+  another-action:
+    commands:
+    - befehl3
+    click: left
+    condition: hand
+    object: ink_sack
+#   Damage value des items/blocks
+    damage: 5

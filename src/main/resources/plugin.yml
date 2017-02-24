@@ -1,0 +1,18 @@
+name: ${project.name}
+version: '${minecraft.plugin.version}'
+main: de.redstoneworld.redaction.RedAction
+authors: [Phoenix616]
+commands:
+   redaction:
+      aliases: [ra]
+      description: Plugin command description.
+      usage: /<command> [reload]
+      permission: rwm.redaction.command
+      permission-message: You don't have the permission <permission>
+permissions:
+   rwm.redaction.command:
+      description: Gives permission to the plugin command
+      default: op
+   rwm.redaction.command.reload:
+      description: Gives permission to reload the plugin
+      default: op
