@@ -47,7 +47,7 @@ public class ActionListener implements Listener {
                         event.getClickedBlock().getState() instanceof Directional ? ((Directional) event.getClickedBlock().getState()).getFacing() : null
                 ));
             }
-        } else if (event.getHand() == EquipmentSlot.OFF_HAND) {
+        } else if (event.getHand() == EquipmentSlot.OFF_HAND && event.getItem() != null) {
             actions.addAll(plugin.getActions(
                     Condition.OFFHAND,
                     click,
