@@ -5,7 +5,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.material.Directional;
-import org.bukkit.material.MaterialData;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -58,7 +57,7 @@ public class ActionListener implements Listener {
         }
 
         for (Action action : actions) {
-            if (event.getPlayer().hasMetadata("rwm.redaction.actions." + action.getName().toLowerCase())) {
+            if (event.getPlayer().hasPermission("rwm.redaction.actions." + action.getName().toLowerCase())) {
                 Map<String, String> replacements = new HashMap<>();
                 replacements.put("click", action.getClick().toString());
                 replacements.put("object", action.getObject().toString());
