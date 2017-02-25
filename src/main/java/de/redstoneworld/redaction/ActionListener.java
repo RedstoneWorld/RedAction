@@ -43,7 +43,7 @@ public class ActionListener implements Listener {
                         click,
                         event.getClickedBlock().getType(),
                         event.getClickedBlock().getState().getData().getData(),
-                        event.getClickedBlock().getState() instanceof Directional ? ((Directional) event.getClickedBlock().getState()).getFacing() : null
+                        event.getClickedBlock().getState().getData() instanceof Directional ? ((Directional) event.getClickedBlock().getState().getData()).getFacing() : null
                 ));
             }
         } else if (event.getHand() == EquipmentSlot.OFF_HAND && event.getItem() != null) {
@@ -73,8 +73,8 @@ public class ActionListener implements Listener {
                     replacements.put("blockx", String.valueOf(event.getClickedBlock().getLocation().getBlockX()));
                     replacements.put("blocky", String.valueOf(event.getClickedBlock().getLocation().getBlockY()));
                     replacements.put("blockz", String.valueOf(event.getClickedBlock().getLocation().getBlockZ()));
-                    if (event.getClickedBlock().getState() instanceof Directional) {
-                        replacements.put("direction", ((Directional) event.getClickedBlock().getState()).getFacing().toString());
+                    if (event.getClickedBlock().getState().getData() instanceof Directional) {
+                        replacements.put("direction", ((Directional) event.getClickedBlock().getState().getData()).getFacing().toString());
                     }
                 }
 
