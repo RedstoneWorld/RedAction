@@ -22,6 +22,7 @@ public final class RedAction extends JavaPlugin {
 
     private Map<Condition, Map<Material, List<String>>> actionTrigger;
     private Map<String, Action> actions;
+    private boolean debug;
 
     @Override
     public void onEnable() {
@@ -33,6 +34,8 @@ public final class RedAction extends JavaPlugin {
     public void loadConfig() {
         saveDefaultConfig();
         reloadConfig();
+
+        debug = getConfig().getBoolean("debug");
 
         actionTrigger = new HashMap<>();
         actions = new HashMap<>();
@@ -55,6 +58,7 @@ public final class RedAction extends JavaPlugin {
         try {
             getServer().getPluginManager().addPermission(new Permission("rwm.redaction.actions." + action.getName().toLowerCase(), PermissionDefault.FALSE));
         } catch (IllegalArgumentException ignored) {}
+        getLogger().log(Level.INFO, "Registered " + action);
     }
 
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
@@ -93,6 +97,7 @@ public final class RedAction extends JavaPlugin {
      * @param replacements  A map of variables mapped to their replacements
      */
     public void execute(Action action, Player player, Map<String, String> replacements) {
+        logDebug(player.getName() + " executes " + action);
         boolean wasOp = player.isOp();
         PermissionAttachment perm = player.addAttachment(this, "*", true);
         String sendCommandFeedback = player.getWorld().getGameRuleValue("sendCommandFeedback");
@@ -114,6 +119,12 @@ public final class RedAction extends JavaPlugin {
             }
             player.removeAttachment(perm);
             player.getWorld().setGameRuleValue("sendCommandFeedback", sendCommandFeedback);
+        }
+    }
+
+    private void logDebug(String message) {
+        if (debug) {
+            getLogger().log(Level.INFO, "Debug: " + message);
         }
     }
 }

@@ -1,6 +1,8 @@
 package de.redstoneworld.redaction;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.ToString;
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.ConfigurationSection;
@@ -8,6 +10,8 @@ import org.bukkit.configuration.ConfigurationSection;
 import java.util.List;
 
 @Getter
+@EqualsAndHashCode
+@ToString
 public class Action {
     private final String name;
     private final Condition condition;
