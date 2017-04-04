@@ -11,7 +11,7 @@ actions:
 #   %exactx% - Exakte X position des Spielers (mit Nachkommastellen)
 #   %exacty% - Exakte y position des Spielers (mit Nachkommastellen)
 #   %exactz% - Exakte z position des Spielers (mit Nachkommastellen)
-#   Wenn condition "block" ist:
+#   Wenn ein Block angeklickt wurde:
 #   %blockx% - X position des geklickten Blocks (ohne Nachkommastellen)
 #   %blocky% - y position des geklickten Blocks (ohne Nachkommastellen)
 #   %blockz% - z position des geklickten Blocks (ohne Nachkommastellen)
@@ -25,17 +25,40 @@ actions:
 #   click: "right" oder "left" = Linksklick / Rechtsklick
     click: right
 #   condition: "hand", "offhand" oder "block"
-#   = zu definieren ist das Item in der Hand oder den Block, auf den man klickt
+#   = zu definieren ist das Item in der Hand oder den Block, auf den man klickt:
+#   Deprecated! Use clicked-block, hand-item and offhand-item
     condition: block
 #   Ob die normale Click-Aktion geblockt werden soll oder nicht. (Default: false)
     cancel: true
 #   Block- oder Item-Definition:
+#   Deprecated! Use clicked-block
     object: trapped_chest
+#   The item that the player should have in his hand
+#   Don't define this to allow all items, use AIR if it should be empty
+    hand-item: stick
+#   The data/damage value of the item in hand. Useful for inksacks etc.
+#   Don't define this to allow all items
+    hand-data: 0
+#   The item that the player should have in his offhand
+#   Don't define this to allow all items, use AIR if it should be empty
+    offhand-item: coal
+#   The data/damage value of the item in offhand. Useful for inksacks etc.
+#   Don't define this to allow all items
+    offhand-data: 0
+#   The block that the player clicked
+#   Don't define this to allow any block, use AIR if he should not have clicked a block
+    clicked-block: trapped_chest
+#   The data/damage value of the clicked. Useful for wool etc.
+#   Don't define this to allow all items
+    block-data: 0
 #   Richtung in die der Block zeigt (ignoriert wenn er keine Richtung hat)
     direction: south
 #   Whether or not the player needs to sneak for this action to run
 #   If this value is not set everything is allowed
     sneaking: false
+#   Whether or not to react on cancelled events or non-cancelled
+#   If this value is not set it will react on all
+    cancelled: false
   another-action:
     commands:
     - befehl3
@@ -43,4 +66,5 @@ actions:
     condition: hand
     object: ink_sack
 #   Damage value des items/blocks
+#   Deprecated! Use block-data, hand-data and offhand-data!
     damage: 5

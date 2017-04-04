@@ -1,12 +1,14 @@
 package de.redstoneworld.redaction;
 
+import org.bukkit.Material;
+import org.bukkit.block.BlockFace;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.material.Directional;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,50 +22,37 @@ public class ActionListener implements Listener {
 
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {
+        if (event.getHand() != EquipmentSlot.HAND) {
+            // Only react on one click event
+            return;
+        }
         ClickType click = ClickType.fromAction(event.getAction());
         if (click == null) {
             // Not a click but other interaction
             return;
         }
 
-        List<Action> actions = new ArrayList<>();
-        if (event.getHand() == EquipmentSlot.HAND) {
-            if (event.getItem() != null) {
-                actions.addAll(plugin.getActions(
-                        Condition.HAND,
-                        click,
-                        event.getItem().getType(),
-                        event.getItem().getDurability(),
-                        null,
-                        event.getPlayer().isSneaking()
-                ));
-            }
-            if (event.getClickedBlock() != null) {
-                actions.addAll(plugin.getActions(
-                        Condition.BLOCK,
-                        click,
-                        event.getClickedBlock().getType(),
-                        event.getClickedBlock().getState().getData().getData(),
-                        event.getClickedBlock().getState().getData() instanceof Directional ? ((Directional) event.getClickedBlock().getState().getData()).getFacing() : null,
-                        event.getPlayer().isSneaking()
-                ));
-            }
-        } else if (event.getHand() == EquipmentSlot.OFF_HAND && event.getItem() != null) {
-            actions.addAll(plugin.getActions(
-                    Condition.OFFHAND,
-                    click,
-                    event.getItem().getType(),
-                    event.getItem().getDurability(),
-                    null,
-                    event.getPlayer().isSneaking()
-            ));
-        }
+        PlayerInventory playerInventory = event.getPlayer().getInventory();
+        List<Action> actions = plugin.getActions(
+                click,
+                event.getClickedBlock() != null ? event.getClickedBlock().getType() : Material.AIR,
+                event.getClickedBlock() != null ? event.getClickedBlock().getState().getData().getData() : -1,
+                event.getClickedBlock() != null && event.getClickedBlock().getState().getData() instanceof Directional ? ((Directional) event.getClickedBlock().getState().getData()).getFacing() : (BlockFace) null,
+                playerInventory.getItemInMainHand() != null ? playerInventory.getItemInMainHand().getType() : Material.AIR,
+                playerInventory.getItemInMainHand() != null ?  playerInventory.getItemInMainHand().getData().getData() : -1,
+                playerInventory.getItemInOffHand() != null ? playerInventory.getItemInOffHand().getType() : Material.AIR,
+                playerInventory.getItemInOffHand() != null ?  playerInventory.getItemInOffHand().getData().getData() : -1,
+                event.getPlayer().isSneaking(),
+                event.isCancelled()
+        );
 
         for (Action action : actions) {
             if (event.getPlayer().hasPermission("rwm.redaction.actions." + action.getName().toLowerCase())) {
                 Map<String, String> replacements = new HashMap<>();
                 replacements.put("click", action.getClick().toString());
-                replacements.put("object", action.getObject().toString());
+                replacements.put("block", String.valueOf(action.getClickedBlock()));
+                replacements.put("hand", String.valueOf(action.getHandItem()));
+                replacements.put("offhand", String.valueOf(action.getOffhandItem()));
                 replacements.put("world", event.getPlayer().getWorld().getName());
                 replacements.put("x", String.valueOf(event.getPlayer().getLocation().getBlockX()));
                 replacements.put("y", String.valueOf(event.getPlayer().getLocation().getBlockY()));
@@ -82,7 +71,7 @@ public class ActionListener implements Listener {
                 }
 
                 plugin.execute(action, event.getPlayer(), replacements);
-                if (action.isCancelled()) {
+                if (action.isCancel()) {
                     event.setCancelled(true);
                 }
             }

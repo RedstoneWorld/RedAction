@@ -14,15 +14,21 @@ import java.util.List;
 @ToString
 public class Action {
     private final String name;
-    private final Condition condition;
-    private final Material object;
+
+    private final Material clickedBlock;
+    private final int blockData;
+    private final BlockFace blockDirection;
+    private final Material handItem;
+    private final int handData;
+    private final Material offhandItem;
+    private final int offhandData;
+
     private final List<String> commands;
     private final boolean outputShown;
     private final ClickType click;
-    private final BlockFace direction;
-    private final int damage;
-    private final boolean cancelled;
+    private final boolean cancel;
     private final Boolean sneaking;
+    private final Boolean cancelled;
 
     /**
      * Create a new action from the config
@@ -32,8 +38,45 @@ public class Action {
      */
     public Action(String name, ConfigurationSection config) throws IllegalArgumentException {
         this.name = name;
-        this.condition = Condition.valueOf(config.getString("condition", "UNKNOWN").toUpperCase());
-        this.object = Material.valueOf(config.getString("object", "UNKNOWN").toUpperCase());
+
+        Material clickedBlock = null;
+        if (config.contains("clicked-block", true)) {
+            clickedBlock = Material.valueOf(config.getString("clicked-block", "UNKNOWN").toUpperCase());
+        }
+        int blockData = config.getInt("block-data", -1);
+        Material handItem = null;
+        if (config.contains("hand-item", true)) {
+            handItem = Material.valueOf(config.getString("hand-item", "UNKNOWN").toUpperCase());
+        }
+        int handData = config.getInt("hand-data", -1);
+        Material offhandItem = null;
+        if (config.contains("offhand-item", true)) {
+            offhandItem = Material.valueOf(config.getString("offhand-item", "UNKNOWN").toUpperCase());
+        }
+        int offhandData = config.getInt("offhand-data", -1);
+
+        // Legacy support
+        if (config.contains("object", true)) {
+            Material object = Material.valueOf(config.getString("object", "UNKNOWN").toUpperCase());
+            String condition = config.getString("condition", null);
+            if ("hand".equalsIgnoreCase(condition)) {
+                handItem = object;
+                handData = config.getInt("damage", -1);
+            } else if ("offhand".equalsIgnoreCase(condition)) {
+                offhandItem = object;
+                offhandData = config.getInt("damage", -1);
+            } else if ("block".equalsIgnoreCase(condition)) {
+                clickedBlock = object;
+                blockData = config.getInt("damage", -1);
+            }
+        }
+
+        this.clickedBlock = clickedBlock;
+        this.blockData = blockData;
+        this.handItem = handItem;
+        this.handData = handData;
+        this.offhandItem = offhandItem;
+        this.offhandData = offhandData;
         this.commands = config.getStringList("commands");
         this.outputShown = config.getBoolean("output", true);
         if (config.contains("click", true)) {
@@ -42,12 +85,12 @@ public class Action {
             this.click = null;
         }
         if (config.contains("direction", true)) {
-            this.direction = BlockFace.valueOf(config.getString("direction").toUpperCase());
+            this.blockDirection = BlockFace.valueOf(config.getString("direction").toUpperCase());
         } else {
-            this.direction = null;
+            this.blockDirection = null;
         }
-        this.damage = config.getInt("damage", -1);
-        this.cancelled = config.getBoolean("cancel", false);
+        this.cancel = config.getBoolean("cancel", false);
         this.sneaking = (Boolean) config.get("sneaking", null);
+        this.cancelled = (Boolean) config.get("cancelled", null);
     }
 }

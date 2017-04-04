@@ -13,15 +13,13 @@ import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
 public final class RedAction extends JavaPlugin {
 
-    private Map<Condition, Map<Material, List<String>>> actionTrigger;
-    private Map<String, Action> actions;
+    private List<Action> actions;
     private boolean debug;
 
     @Override
@@ -37,8 +35,7 @@ public final class RedAction extends JavaPlugin {
 
         debug = getConfig().getBoolean("debug");
 
-        actionTrigger = new HashMap<>();
-        actions = new HashMap<>();
+        actions = new ArrayList<>();
 
         ConfigurationSection actionSection = getConfig().getConfigurationSection("actions");
         for (String actionName : actionSection.getKeys(false)) {
@@ -51,10 +48,7 @@ public final class RedAction extends JavaPlugin {
     }
 
     private void registerAction(Action action) {
-        actions.put(action.getName().toLowerCase(), action);
-        actionTrigger.putIfAbsent(action.getCondition(), new HashMap<>());
-        actionTrigger.get(action.getCondition()).putIfAbsent(action.getObject(), new ArrayList<>());
-        actionTrigger.get(action.getCondition()).get(action.getObject()).add(action.getName().toLowerCase());
+        actions.add(action);
         try {
             getServer().getPluginManager().addPermission(new Permission("rwm.redaction.actions." + action.getName().toLowerCase(), PermissionDefault.FALSE));
         } catch (IllegalArgumentException ignored) {}
@@ -72,19 +66,22 @@ public final class RedAction extends JavaPlugin {
         return false;
     }
 
-    public List<Action> getActions(Condition condition, ClickType click, Material type, short durability, BlockFace direction, boolean sneaking) {
+    public List<Action> getActions(ClickType click, Material clickedBlock, byte blockData, BlockFace blockDirection, Material handItem, byte handData, Material offhandItem, byte offhandData, boolean sneaking, boolean cancelled) {
         List<Action> actionList = new ArrayList<>();
 
-        if (actionTrigger.containsKey(condition) && actionTrigger.get(condition).containsKey(type)) {
-            for (String actionName : actionTrigger.get(condition).get(type)) {
-                Action action = actions.get(actionName);
-                if (action != null
-                        && (action.getClick() == null || action.getClick() == click)
-                        && (action.getDamage() < 0 || action.getDamage() == durability)
-                        && (direction == null || action.getDirection() == null || action.getDirection() == direction)
-                        && (action.getSneaking() == null || action.getSneaking() == sneaking)) {
-                    actionList.add(action);
-                }
+        for (Action action : actions) {
+            if (action != null
+                    && (action.getClick() == null || action.getClick() == click)
+                    && (action.getClickedBlock() == null || action.getClickedBlock() == clickedBlock)
+                    && (action.getHandItem() == null || action.getHandItem() == handItem)
+                    && (action.getOffhandItem() == null || action.getOffhandItem() == offhandItem)
+                    && (blockData == -1 || action.getBlockData() < 0 || action.getBlockData() == blockData)
+                    && (handData == -1 || action.getBlockData() < 0 || action.getBlockData() == blockData)
+                    && (blockData == -1 || action.getBlockData() < 0 || action.getBlockData() == blockData)
+                    && (blockDirection == null || action.getBlockDirection() == null || action.getBlockDirection() == blockDirection)
+                    && (action.getSneaking() == null || action.getSneaking().booleanValue() == sneaking)
+                    && (action.getCancelled() == null || action.getCancelled().booleanValue() == cancelled)) {
+                actionList.add(action);
             }
         }
 
