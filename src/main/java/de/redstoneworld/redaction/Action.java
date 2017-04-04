@@ -22,6 +22,7 @@ public class Action {
     private final BlockFace direction;
     private final int damage;
     private final boolean cancelled;
+    private final Boolean sneaking;
 
     /**
      * Create a new action from the config
@@ -47,5 +48,6 @@ public class Action {
         }
         this.damage = config.getInt("damage", -1);
         this.cancelled = config.getBoolean("cancel", false);
+        this.sneaking = (Boolean) config.get("sneaking", null);
     }
 }

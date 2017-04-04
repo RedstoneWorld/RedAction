@@ -33,6 +33,9 @@ actions:
     object: trapped_chest
 #   Richtung in die der Block zeigt (ignoriert wenn er keine Richtung hat)
     direction: south
+#   Whether or not the player needs to sneak for this action to run
+#   If this value is not set everything is allowed
+    sneaking: false
   another-action:
     commands:
     - befehl3

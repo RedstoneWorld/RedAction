@@ -34,7 +34,8 @@ public class ActionListener implements Listener {
                         click,
                         event.getItem().getType(),
                         event.getItem().getDurability(),
-                        null
+                        null,
+                        event.getPlayer().isSneaking()
                 ));
             }
             if (event.getClickedBlock() != null) {
@@ -43,7 +44,8 @@ public class ActionListener implements Listener {
                         click,
                         event.getClickedBlock().getType(),
                         event.getClickedBlock().getState().getData().getData(),
-                        event.getClickedBlock().getState().getData() instanceof Directional ? ((Directional) event.getClickedBlock().getState().getData()).getFacing() : null
+                        event.getClickedBlock().getState().getData() instanceof Directional ? ((Directional) event.getClickedBlock().getState().getData()).getFacing() : null,
+                        event.getPlayer().isSneaking()
                 ));
             }
         } else if (event.getHand() == EquipmentSlot.OFF_HAND && event.getItem() != null) {
@@ -52,7 +54,8 @@ public class ActionListener implements Listener {
                     click,
                     event.getItem().getType(),
                     event.getItem().getDurability(),
-                    null
+                    null,
+                    event.getPlayer().isSneaking()
             ));
         }
 

@@ -72,7 +72,7 @@ public final class RedAction extends JavaPlugin {
         return false;
     }
 
-    public List<Action> getActions(Condition condition, ClickType click, Material type, short durability, BlockFace direction) {
+    public List<Action> getActions(Condition condition, ClickType click, Material type, short durability, BlockFace direction, boolean sneaking) {
         List<Action> actionList = new ArrayList<>();
 
         if (actionTrigger.containsKey(condition) && actionTrigger.get(condition).containsKey(type)) {
@@ -81,7 +81,8 @@ public final class RedAction extends JavaPlugin {
                 if (action != null
                         && (action.getClick() == null || action.getClick() == click)
                         && (action.getDamage() < 0 || action.getDamage() == durability)
-                        && (direction == null || action.getDirection() == null || action.getDirection() == direction)) {
+                        && (direction == null || action.getDirection() == null || action.getDirection() == direction)
+                        && (action.getSneaking() == null || action.getSneaking() == sneaking)) {
                     actionList.add(action);
                 }
             }
