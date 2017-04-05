@@ -8,9 +8,13 @@ actions:
 #   %x% - X position des Spielers (ohne Nachkommastellen)
 #   %y% - y position des Spielers (ohne Nachkommastellen)
 #   %z% - z position des Spielers (ohne Nachkommastellen)
+#   %yaw% - yaw des Spielers (ohne Nachkommastellen)
+#   %pitch% - pitch des Spielers (ohne Nachkommastellen)
 #   %exactx% - Exakte X position des Spielers (mit Nachkommastellen)
 #   %exacty% - Exakte y position des Spielers (mit Nachkommastellen)
 #   %exactz% - Exakte z position des Spielers (mit Nachkommastellen)
+#   %exact yaw% - Exakter yaw des Spielers (mit Nachkommastellen)
+#   %exact pitch% - Exakter pitch des Spielers (mit Nachkommastellen)
 #   Wenn ein Block angeklickt wurde:
 #   %blockx% - X position des geklickten Blocks (ohne Nachkommastellen)
 #   %blocky% - y position des geklickten Blocks (ohne Nachkommastellen)
