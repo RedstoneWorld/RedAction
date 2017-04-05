@@ -57,13 +57,13 @@ public class ActionListener implements Listener {
                 replacements.put("x", String.valueOf(event.getPlayer().getLocation().getBlockX()));
                 replacements.put("y", String.valueOf(event.getPlayer().getLocation().getBlockY()));
                 replacements.put("z", String.valueOf(event.getPlayer().getLocation().getBlockZ()));
-                replacements.put("yaw", String.valueOf(Math.floor(event.getPlayer().getLocation().getYaw())));
-                replacements.put("pitch", String.valueOf(Math.floor(event.getPlayer().getLocation().getPitch())));
+                replacements.put("yaw", String.valueOf(Math.floor(event.getPlayer().getEyeLocation().getYaw())));
+                replacements.put("pitch", String.valueOf(Math.floor(event.getPlayer().getEyeLocation().getPitch())));
                 replacements.put("exactx", String.valueOf(event.getPlayer().getLocation().getX()));
                 replacements.put("exacty", String.valueOf(event.getPlayer().getLocation().getY()));
                 replacements.put("exactz", String.valueOf(event.getPlayer().getLocation().getZ()));
-                replacements.put("exactyaw", String.valueOf(event.getPlayer().getLocation().getYaw()));
-                replacements.put("exactpitch", String.valueOf(event.getPlayer().getLocation().getPitch()));
+                replacements.put("exactyaw", String.valueOf(event.getPlayer().getEyeLocation().getYaw()));
+                replacements.put("exactpitch", String.valueOf(event.getPlayer().getEyeLocation().getPitch()));
 
                 if (event.getClickedBlock() != null) {
                     replacements.put("blockx", String.valueOf(event.getClickedBlock().getLocation().getBlockX()));
