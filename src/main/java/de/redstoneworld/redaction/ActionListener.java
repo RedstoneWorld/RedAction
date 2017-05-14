@@ -1,18 +1,15 @@
 package de.redstoneworld.redaction;
 
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
-import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
@@ -95,24 +92,40 @@ public class ActionListener implements Listener {
                 replacements.put("hand", String.valueOf(action.getHandItem()));
                 replacements.put("offhand", String.valueOf(action.getOffhandItem()));
                 replacements.put("world", player.getWorld().getName());
-                replacements.put("x", String.valueOf(player.getLocation().getBlockX()));
-                replacements.put("y", String.valueOf(player.getLocation().getBlockY()));
-                replacements.put("z", String.valueOf(player.getLocation().getBlockZ()));
-                replacements.put("yaw", String.valueOf(Math.floor(player.getEyeLocation().getYaw())));
-                replacements.put("pitch", String.valueOf(Math.floor(player.getEyeLocation().getPitch())));
-                replacements.put("exactx", String.valueOf(player.getLocation().getX()));
-                replacements.put("exacty", String.valueOf(player.getLocation().getY()));
-                replacements.put("exactz", String.valueOf(player.getLocation().getZ()));
-                replacements.put("exactyaw", String.valueOf(player.getEyeLocation().getYaw()));
-                replacements.put("exactpitch", String.valueOf(player.getEyeLocation().getPitch()));
+                Location playerLocation = player.getLocation();
+                Location playerEyeLocation = player.getEyeLocation();
+                replacements.put("x", String.valueOf(playerLocation.getBlockX()));
+                replacements.put("y", String.valueOf(playerLocation.getBlockY()));
+                replacements.put("z", String.valueOf(playerLocation.getBlockZ()));
+                replacements.put("yaw", String.valueOf(Math.floor(playerEyeLocation.getYaw())));
+                replacements.put("pitch", String.valueOf(Math.floor(playerEyeLocation.getPitch())));
+                replacements.put("exactx", String.valueOf(playerLocation.getX()));
+                replacements.put("exacty", String.valueOf(playerLocation.getY()));
+                replacements.put("exactz", String.valueOf(playerLocation.getZ()));
+                replacements.put("exactyaw", String.valueOf(playerEyeLocation.getYaw()));
+                replacements.put("exactpitch", String.valueOf(playerEyeLocation.getPitch()));
 
                 if (clickedBlock != null) {
-                    replacements.put("blockx", String.valueOf(clickedBlock.getLocation().getBlockX()));
-                    replacements.put("blocky", String.valueOf(clickedBlock.getLocation().getBlockY()));
-                    replacements.put("blockz", String.valueOf(clickedBlock.getLocation().getBlockZ()));
+                    Location blockLocation = clickedBlock.getLocation();
+                    replacements.put("blockx", String.valueOf(blockLocation.getBlockX()));
+                    replacements.put("blocky", String.valueOf(blockLocation.getBlockY()));
+                    replacements.put("blockz", String.valueOf(blockLocation.getBlockZ()));
                     if (clickedBlock.getState().getData() instanceof Directional) {
                         replacements.put("direction", ((Directional) clickedBlock.getState().getData()).getFacing().toString());
                     }
+                }
+                if (clickedEntity != null) {
+                    Location entityLocation = clickedEntity.getLocation();
+                    replacements.put("entityx", String.valueOf(entityLocation.getBlockX()));
+                    replacements.put("entityy", String.valueOf(entityLocation.getBlockY()));
+                    replacements.put("entityz", String.valueOf(entityLocation.getBlockZ()));
+                    replacements.put("entityyaw", String.valueOf(Math.floor(entityLocation.getYaw())));
+                    replacements.put("entitypitch", String.valueOf(Math.floor(entityLocation.getPitch())));
+                    replacements.put("entityexactx", String.valueOf(entityLocation.getX()));
+                    replacements.put("entityexacty", String.valueOf(entityLocation.getY()));
+                    replacements.put("entityexactz", String.valueOf(entityLocation.getZ()));
+                    replacements.put("entityexactyaw", String.valueOf(entityLocation.getYaw()));
+                    replacements.put("entityexactpitch", String.valueOf(entityLocation.getPitch()));
                 }
 
                 plugin.execute(action, player, replacements);
