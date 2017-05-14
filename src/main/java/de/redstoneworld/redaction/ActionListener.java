@@ -49,6 +49,7 @@ public class ActionListener implements Listener {
         for (Action action : actions) {
             if (event.getPlayer().hasPermission("rwm.redaction.actions." + action.getName().toLowerCase())) {
                 Map<String, String> replacements = new HashMap<>();
+                replacements.put("player", event.getPlayer().getName());
                 replacements.put("click", action.getClick().toString());
                 replacements.put("block", String.valueOf(action.getClickedBlock()));
                 replacements.put("hand", String.valueOf(action.getHandItem()));
