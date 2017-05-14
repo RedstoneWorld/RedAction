@@ -71,7 +71,7 @@ public class ActionListener implements Listener {
                 clickedBlock != null ? clickedBlock.getState().getData().getData() : -1,
                 clickedBlock != null && clickedBlock.getState().getData() instanceof Directional ? ((Directional) clickedBlock.getState().getData()).getFacing() : null,
                 clickedEntity != null ? clickedEntity.getType() : null,
-                clickedEntity != null && (clickedEntity instanceof Ageable && !((Ageable) clickedEntity).isAdult()),
+                clickedEntity != null ? (clickedEntity instanceof Ageable && !((Ageable) clickedEntity).isAdult()) : null,
                 playerInventory.getItemInMainHand() != null ? playerInventory.getItemInMainHand().getType() : Material.AIR,
                 playerInventory.getItemInMainHand() != null ?  playerInventory.getItemInMainHand().getData().getData() : -1,
                 playerInventory.getItemInOffHand() != null ? playerInventory.getItemInOffHand().getType() : Material.AIR,
@@ -88,7 +88,7 @@ public class ActionListener implements Listener {
                 replacements.put("block", String.valueOf(action.getClickedBlock()));
                 replacements.put("blockdata", String.valueOf(action.getBlockData()));
                 replacements.put("entity", String.valueOf(action.getClickedEntity()));
-                replacements.put("isbaby", String.valueOf(action.isClickedEntityBaby()));
+                replacements.put("isbaby", String.valueOf(action.getIsClickedEntityBaby()));
                 replacements.put("hand", String.valueOf(action.getHandItem()));
                 replacements.put("offhand", String.valueOf(action.getOffhandItem()));
                 replacements.put("world", player.getWorld().getName());

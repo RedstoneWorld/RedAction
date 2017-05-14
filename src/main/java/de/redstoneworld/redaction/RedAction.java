@@ -75,15 +75,15 @@ public final class RedAction extends JavaPlugin {
                     && (action.getClick() == null || action.getClick() == click)
                     && (action.getClickedBlock() == null || action.getClickedBlock() == clickedBlock)
                     && (action.getClickedEntity() == null || action.getClickedEntity() == entityType)
-                    && (action.getClickedEntity() == null || entityType == null || action.isClickedEntityBaby() == baby)
+                    && (action.getClickedEntity() == null || entityType == null || action.getIsClickedEntityBaby() == null || action.getIsClickedEntityBaby() == baby)
                     && (action.getHandItem() == null || action.getHandItem() == handItem)
                     && (action.getOffhandItem() == null || action.getOffhandItem() == offhandItem)
                     && (blockData == -1 || action.getBlockData() < 0 || action.getBlockData() == blockData)
                     && (handData == -1 || action.getBlockData() < 0 || action.getBlockData() == blockData)
                     && (blockData == -1 || action.getBlockData() < 0 || action.getBlockData() == blockData)
                     && (blockDirection == null || action.getBlockDirection() == null || action.getBlockDirection() == blockDirection)
-                    && (action.getSneaking() == null || action.getSneaking().booleanValue() == sneaking)
-                    && (action.getCancelled() == null || action.getCancelled().booleanValue() == cancelled)) {
+                    && (action.getSneaking() == null || action.getSneaking() == sneaking)
+                    && (action.getCancelled() == null || action.getCancelled() == cancelled)) {
                 actionList.add(action);
             }
         }

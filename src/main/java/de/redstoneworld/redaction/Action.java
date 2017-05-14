@@ -20,7 +20,7 @@ public class Action {
     private final int blockData;
     private final BlockFace blockDirection;
     private final EntityType clickedEntity;
-    private final boolean clickedEntityBaby;
+    private final Boolean isClickedEntityBaby;
     private final Material handItem;
     private final int handData;
     private final Material offhandItem;
@@ -51,7 +51,7 @@ public class Action {
         if (config.contains("clicked-entity", true)) {
             clickedEntity = EntityType.valueOf(config.getString("clicked-entity", "NULL").toUpperCase());
         }
-        clickedEntityBaby = config.getBoolean("entity-is-baby", false);
+        isClickedEntityBaby = (Boolean) config.get("entity-is-baby", null);
         Material handItem = null;
         if (config.contains("hand-item", true)) {
             handItem = Material.valueOf(config.getString("hand-item", "NULL").toUpperCase());
