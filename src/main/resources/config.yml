@@ -1,5 +1,5 @@
 debug: false
-actions:
+elements:
 # <Action-Name, zum Beispiel: "B12" oder "Test">
   default-action:
 #   Anzahl an Befehle nicht begrenzt, in selber Reihenfolge wie angebene ausgeführt und mit allen Rechten

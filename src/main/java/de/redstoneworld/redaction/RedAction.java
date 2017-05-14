@@ -6,6 +6,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionAttachment;
@@ -66,13 +67,15 @@ public final class RedAction extends JavaPlugin {
         return false;
     }
 
-    public List<Action> getActions(ClickType click, Material clickedBlock, byte blockData, BlockFace blockDirection, Material handItem, byte handData, Material offhandItem, byte offhandData, boolean sneaking, boolean cancelled) {
+    public List<Action> getActions(ClickType click, Material clickedBlock, byte blockData, BlockFace blockDirection, EntityType entityType, boolean baby, Material handItem, byte handData, Material offhandItem, byte offhandData, boolean sneaking, boolean cancelled) {
         List<Action> actionList = new ArrayList<>();
 
         for (Action action : actions) {
             if (action != null
                     && (action.getClick() == null || action.getClick() == click)
                     && (action.getClickedBlock() == null || action.getClickedBlock() == clickedBlock)
+                    && (action.getClickedEntity() == null || action.getClickedEntity() == entityType)
+                    && (action.getClickedEntity() == null || entityType == null || action.isClickedEntityBaby() == baby)
                     && (action.getHandItem() == null || action.getHandItem() == handItem)
                     && (action.getOffhandItem() == null || action.getOffhandItem() == offhandItem)
                     && (blockData == -1 || action.getBlockData() < 0 || action.getBlockData() == blockData)

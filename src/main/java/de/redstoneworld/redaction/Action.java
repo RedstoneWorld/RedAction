@@ -6,6 +6,7 @@ import lombok.ToString;
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.EntityType;
 
 import java.util.List;
 
@@ -18,6 +19,8 @@ public class Action {
     private final Material clickedBlock;
     private final int blockData;
     private final BlockFace blockDirection;
+    private final EntityType clickedEntity;
+    private final boolean clickedEntityBaby;
     private final Material handItem;
     private final int handData;
     private final Material offhandItem;
@@ -41,23 +44,28 @@ public class Action {
 
         Material clickedBlock = null;
         if (config.contains("clicked-block", true)) {
-            clickedBlock = Material.valueOf(config.getString("clicked-block", "UNKNOWN").toUpperCase());
+            clickedBlock = Material.valueOf(config.getString("clicked-block", "NULL").toUpperCase());
         }
         int blockData = config.getInt("block-data", -1);
+        EntityType clickedEntity = null;
+        if (config.contains("clicked-entity", true)) {
+            clickedEntity = EntityType.valueOf(config.getString("clicked-entity", "NULL").toUpperCase());
+        }
+        clickedEntityBaby = config.getBoolean("entity-is-baby", false);
         Material handItem = null;
         if (config.contains("hand-item", true)) {
-            handItem = Material.valueOf(config.getString("hand-item", "UNKNOWN").toUpperCase());
+            handItem = Material.valueOf(config.getString("hand-item", "NULL").toUpperCase());
         }
         int handData = config.getInt("hand-data", -1);
         Material offhandItem = null;
         if (config.contains("offhand-item", true)) {
-            offhandItem = Material.valueOf(config.getString("offhand-item", "UNKNOWN").toUpperCase());
+            offhandItem = Material.valueOf(config.getString("offhand-item", "NULL").toUpperCase());
         }
         int offhandData = config.getInt("offhand-data", -1);
 
         // Legacy support
         if (config.contains("object", true)) {
-            Material object = Material.valueOf(config.getString("object", "UNKNOWN").toUpperCase());
+            Material object = Material.valueOf(config.getString("object", "NULL").toUpperCase());
             String condition = config.getString("condition", null);
             if ("hand".equalsIgnoreCase(condition)) {
                 handItem = object;
@@ -73,6 +81,7 @@ public class Action {
 
         this.clickedBlock = clickedBlock;
         this.blockData = blockData;
+        this.clickedEntity = clickedEntity;
         this.handItem = handItem;
         this.handData = handData;
         this.offhandItem = offhandItem;
