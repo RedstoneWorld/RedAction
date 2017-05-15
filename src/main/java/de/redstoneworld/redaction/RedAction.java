@@ -67,7 +67,7 @@ public final class RedAction extends JavaPlugin {
         return false;
     }
 
-    public List<Action> getActions(ClickType click, Material clickedBlock, byte blockData, BlockFace blockDirection, EntityType entityType, boolean baby, Material handItem, byte handData, Material offhandItem, byte offhandData, boolean sneaking, boolean cancelled) {
+    public List<Action> getActions(ClickType click, Material clickedBlock, byte blockData, BlockFace blockDirection, EntityType entityType, Boolean baby, Material handItem, byte handData, Material offhandItem, byte offhandData, boolean sneaking, boolean cancelled) {
         List<Action> actionList = new ArrayList<>();
 
         for (Action action : actions) {
