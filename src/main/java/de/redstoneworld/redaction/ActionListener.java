@@ -69,7 +69,11 @@ public class ActionListener implements Listener {
                 click,
                 clickedBlock != null ? clickedBlock.getType() : Material.AIR,
                 clickedBlock != null ? clickedBlock.getState().getData().getData() : -1,
-                clickedBlock != null && clickedBlock.getState().getData() instanceof Directional ? ((Directional) clickedBlock.getState().getData()).getFacing() : null,
+                clickedBlock != null && clickedBlock.getState().getData() instanceof Directional
+                        ? ((Directional) clickedBlock.getState().getData()).getFacing()
+                        : clickedEntity != null && clickedEntity instanceof Directional
+                                ? ((Directional) clickedEntity).getFacing()
+                                : null,
                 clickedEntity != null ? clickedEntity.getType() : null,
                 clickedEntity != null ? (clickedEntity instanceof Ageable && !((Ageable) clickedEntity).isAdult()) : null,
                 playerInventory.getItemInMainHand() != null ? playerInventory.getItemInMainHand().getType() : Material.AIR,
