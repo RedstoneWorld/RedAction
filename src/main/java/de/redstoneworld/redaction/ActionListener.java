@@ -126,6 +126,9 @@ public class ActionListener implements Listener {
                     replacements.put("entityexactz", String.valueOf(entityLocation.getZ()));
                     replacements.put("entityexactyaw", String.valueOf(entityLocation.getYaw()));
                     replacements.put("entityexactpitch", String.valueOf(entityLocation.getPitch()));
+                    if (clickedEntity instanceof Directional) {
+                        replacements.put("direction", ((Directional) clickedEntity).getFacing().toString());
+                    }
                 }
 
                 plugin.execute(action, player, replacements);
