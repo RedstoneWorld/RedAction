@@ -8,6 +8,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
@@ -27,7 +28,7 @@ public class ActionListener implements Listener {
         this.plugin = plugin;
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerInteract(PlayerInteractEvent event) {
         if (event.getHand() != EquipmentSlot.HAND) {
             // Only react on one click event
@@ -42,7 +43,7 @@ public class ActionListener implements Listener {
         handleEvent(event, event.getPlayer(), click, event.getClickedBlock(), null);
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerEntityInteract(PlayerInteractEntityEvent event) {
         if (event.getHand() != EquipmentSlot.HAND) {
             // Only react on one click event
@@ -52,7 +53,7 @@ public class ActionListener implements Listener {
         handleEvent(event, event.getPlayer(), ClickType.RIGHT, null, event.getRightClicked());
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerDamageInteract(EntityDamageByEntityEvent event) {
         if (!(event.getDamager() instanceof Player)) {
             // Only react on players
