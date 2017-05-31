@@ -81,7 +81,7 @@ public final class RedAction extends JavaPlugin {
                     && (blockData == -1 || action.getBlockData() < 0 || action.getBlockData() == blockData)
                     && (handData == -1 || action.getBlockData() < 0 || action.getBlockData() == blockData)
                     && (blockData == -1 || action.getBlockData() < 0 || action.getBlockData() == blockData)
-                    && (blockDirection == null || action.getBlockDirection() == null || action.getBlockDirection() == blockDirection)
+                    && (action.getBlockDirection() == null || action.getBlockDirection() == blockDirection)
                     && (action.getSneaking() == null || action.getSneaking() == sneaking)
                     && (action.getCancelled() == null || action.getCancelled() == cancelled)) {
                 actionList.add(action);
