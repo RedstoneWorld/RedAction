@@ -100,27 +100,36 @@ public final class RedAction extends JavaPlugin {
     public void execute(Action action, Player player, Map<String, String> replacements) {
         logDebug(player.getName() + " executes " + action);
         boolean wasOp = player.isOp();
-        PermissionAttachment perm = player.addAttachment(this, "*", true);
+        PermissionAttachment perm = player.addAttachment(this);
+        for (String commandPerm : action.getCommandPermissions()) {
+            perm.setPermission(replaceReplacements(commandPerm, replacements), !commandPerm.startsWith("-") && !commandPerm.startsWith("!"));
+        }
+        if (action.getCommandPermissions().isEmpty()) {
+            perm.setPermission( "*", true);
+        }
         String sendCommandFeedback = player.getWorld().getGameRuleValue("sendCommandFeedback");
         try {
-            if (!wasOp) {
+            if (action.isCommandsAsOperator() && !wasOp) {
                 player.setOp(true);
             }
             player.getWorld().setGameRuleValue("sendCommandFeedback", String.valueOf(action.isOutputShown()));
             for (String command : action.getCommands()) {
-                String replacedCommand = command;
-                for (Map.Entry<String, String> replacement : replacements.entrySet()) {
-                    replacedCommand = replacedCommand.replace("%" + replacement.getKey() + "%", replacement.getValue());
-                }
-                player.getServer().dispatchCommand(player, replacedCommand);
+                player.getServer().dispatchCommand(player, replaceReplacements(command, replacements));
             }
         } finally {
-            if (!wasOp) {
+            if (action.isCommandsAsOperator() && !wasOp) {
                 player.setOp(false);
             }
             player.removeAttachment(perm);
             player.getWorld().setGameRuleValue("sendCommandFeedback", sendCommandFeedback);
         }
+    }
+
+    private String replaceReplacements(String string, Map<String, String> replacements) {
+        for (Map.Entry<String, String> replacement : replacements.entrySet()) {
+            string = string.replace("%" + replacement.getKey() + "%", replacement.getValue());
+        }
+        return string;
     }
 
     private void logDebug(String message) {
