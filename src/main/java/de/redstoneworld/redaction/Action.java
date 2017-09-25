@@ -29,6 +29,7 @@ public class Action {
     private final List<String> commands;
     private final List<String> commandPermissions;
     private final boolean commandsAsOperator;
+    private final boolean commandsAsConsole;
     private final boolean outputShown;
     private final ClickType click;
     private final boolean cancel;
@@ -91,6 +92,7 @@ public class Action {
         this.commands = config.getStringList("commands");
         this.commandPermissions = config.getStringList("command-permissions");
         this.commandsAsOperator = config.getBoolean("command-as-operator", true);
+        this.commandsAsConsole = config.getBoolean("command-as-console", false);
         this.outputShown = config.getBoolean("output", true);
         if (config.contains("click", true)) {
             this.click = ClickType.valueOf(config.getString("click").toUpperCase());

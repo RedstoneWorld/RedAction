@@ -89,6 +89,8 @@ elements:
   another-action:
     commands:
     - befehl3
+#   Execute commands as the console? (Optional. Default is false)
+    command-as-console: true
     click: left
     condition: hand
     object: ink_sack

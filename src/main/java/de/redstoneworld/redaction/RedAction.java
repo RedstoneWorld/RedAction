@@ -114,7 +114,8 @@ public final class RedAction extends JavaPlugin {
             }
             player.getWorld().setGameRuleValue("sendCommandFeedback", String.valueOf(action.isOutputShown()));
             for (String command : action.getCommands()) {
-                player.getServer().dispatchCommand(player, replaceReplacements(command, replacements));
+                player.getServer().dispatchCommand(action.isCommandsAsConsole() ? getServer().getConsoleSender() : player,
+                        replaceReplacements(command, replacements));
             }
         } finally {
             if (action.isCommandsAsOperator() && !wasOp) {
