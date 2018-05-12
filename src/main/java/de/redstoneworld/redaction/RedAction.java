@@ -104,9 +104,6 @@ public final class RedAction extends JavaPlugin {
         for (String commandPerm : action.getCommandPermissions()) {
             perm.setPermission(replaceReplacements(commandPerm, replacements), !commandPerm.startsWith("-") && !commandPerm.startsWith("!"));
         }
-        if (action.getCommandPermissions().isEmpty()) {
-            perm.setPermission( "*", true);
-        }
         String sendCommandFeedback = player.getWorld().getGameRuleValue("sendCommandFeedback");
         try {
             if (action.isCommandsAsOperator() && !wasOp) {
