@@ -3,6 +3,8 @@ package de.redstoneworld.redaction;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.Directional;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -15,7 +17,8 @@ import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.PlayerInventory;
-import org.bukkit.material.Directional;
+import org.bukkit.inventory.meta.Damageable;
+import org.bukkit.material.Attachable;
 
 import java.util.HashMap;
 import java.util.List;
@@ -66,21 +69,25 @@ public class ActionListener implements Listener {
     private void handleEvent(Cancellable event, Player player, ClickType click, Block clickedBlock, Entity clickedEntity) {
 
         PlayerInventory playerInventory = player.getInventory();
+        BlockData blockData = clickedBlock != null ? clickedBlock.getState(false).getBlockData() : null;
+        playerInventory.getItemInMainHand();
+        playerInventory.getItemInMainHand();
+        playerInventory.getItemInOffHand();
+        playerInventory.getItemInOffHand();
         List<Action> actions = plugin.getActions(
                 click,
                 clickedBlock != null ? clickedBlock.getType() : Material.AIR,
-                clickedBlock != null ? clickedBlock.getState().getData().getData() : -1,
-                clickedBlock != null && clickedBlock.getState().getData() instanceof Directional
-                        ? ((Directional) clickedBlock.getState().getData()).getFacing()
-                        : clickedEntity != null && clickedEntity instanceof Directional
-                                ? ((Directional) clickedEntity).getFacing()
-                                : null,
+                blockData,
+                blockData instanceof Directional ? ((Directional) blockData).getFacing()
+                        : clickedEntity instanceof Attachable ? ((org.bukkit.material.Directional) clickedEntity).getFacing() : null,
                 clickedEntity != null ? clickedEntity.getType() : null,
                 clickedEntity != null ? (clickedEntity instanceof Ageable && !((Ageable) clickedEntity).isAdult()) : null,
-                playerInventory.getItemInMainHand() != null ? playerInventory.getItemInMainHand().getType() : Material.AIR,
-                playerInventory.getItemInMainHand() != null ?  playerInventory.getItemInMainHand().getData().getData() : -1,
-                playerInventory.getItemInOffHand() != null ? playerInventory.getItemInOffHand().getType() : Material.AIR,
-                playerInventory.getItemInOffHand() != null ?  playerInventory.getItemInOffHand().getData().getData() : -1,
+                playerInventory.getItemInMainHand().getType(),
+                playerInventory.getItemInMainHand().getItemMeta() instanceof Damageable
+                        ? ((Damageable) playerInventory.getItemInMainHand().getItemMeta()).getDamage() : -1,
+                playerInventory.getItemInOffHand().getType(),
+                playerInventory.getItemInOffHand().getItemMeta() instanceof Damageable
+                        ? ((Damageable) playerInventory.getItemInOffHand().getItemMeta()).getDamage() : -1,
                 player.isSneaking(),
                 event.isCancelled()
         );
@@ -91,7 +98,8 @@ public class ActionListener implements Listener {
                 replacements.put("player", player.getName());
                 replacements.put("click", action.getClick().toString());
                 replacements.put("block", String.valueOf(action.getClickedBlock()));
-                replacements.put("blockdata", String.valueOf(action.getBlockData()));
+                replacements.put("blockdata", action.getBlockData().getAsString(true));
+                replacements.put("states", action.getBlockData().getAsString(true));
                 replacements.put("entity", String.valueOf(action.getClickedEntity()));
                 replacements.put("isbaby", String.valueOf(action.getIsClickedEntityBaby()));
                 replacements.put("hand", String.valueOf(action.getHandItem()));

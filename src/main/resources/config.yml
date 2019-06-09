@@ -63,22 +63,23 @@ elements:
 #   The item that the player should have in his hand
 #   Don't define this to allow all items, use AIR if it should be empty
     hand-item: stick
-#   The data/damage value of the item in hand. Useful for inksacks etc.
+#   The damage value of the item in hand. Useful for tools.
 #   Don't define this to allow all items
-    hand-data: 0
+    hand-damage: 0
 #   The item that the player should have in his offhand
 #   Don't define this to allow all items, use AIR if it should be empty
     offhand-item: coal
-#   The data/damage value of the item in offhand. Useful for inksacks etc.
+#   The damage value of the item in offhand. Useful for tools.
 #   Don't define this to allow all items
-    offhand-data: 0
+    offhand-damage: 0
 #   The block that the player clicked
 #   Don't define this to allow any block, use AIR if he should not have clicked a block
     clicked-block: trapped_chest
-#   The data/damage value of the clicked. Useful for wool etc.
-#   Don't define this to allow all items
-    block-data: 0
+#   The states of the clicked block. Only the ones specified get matched.
+#   Leave empty to allow all. Possible values: https://minecraft.gamepedia.com/Block_states
+    states: "[waterlogged=true]"
 #   Richtung in die der Block zeigt (ignoriert wenn er keine Richtung hat)
+#   Kann auch über states angegeben werden
     direction: south
 #   Whether or not the player needs to sneak for this action to run
 #   If this value is not set everything is allowed

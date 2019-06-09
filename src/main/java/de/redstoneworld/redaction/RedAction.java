@@ -1,8 +1,10 @@
 package de.redstoneworld.redaction;
 
 import org.bukkit.ChatColor;
+import org.bukkit.GameRule;
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
@@ -67,7 +69,7 @@ public final class RedAction extends JavaPlugin {
         return false;
     }
 
-    public List<Action> getActions(ClickType click, Material clickedBlock, byte blockData, BlockFace blockDirection, EntityType entityType, Boolean baby, Material handItem, byte handData, Material offhandItem, byte offhandData, boolean sneaking, boolean cancelled) {
+    public List<Action> getActions(ClickType click, Material clickedBlock, BlockData blockData, BlockFace blockDirection, EntityType entityType, Boolean baby, Material handItem, int handDamage, Material offhandItem, int offhandDamage, boolean sneaking, boolean cancelled) {
         List<Action> actionList = new ArrayList<>();
 
         for (Action action : actions) {
@@ -78,12 +80,12 @@ public final class RedAction extends JavaPlugin {
                     && (action.getClickedEntity() == null || entityType == null || action.getIsClickedEntityBaby() == null || action.getIsClickedEntityBaby() == baby)
                     && (action.getHandItem() == null || action.getHandItem() == handItem)
                     && (action.getOffhandItem() == null || action.getOffhandItem() == offhandItem)
-                    && (blockData == -1 || action.getBlockData() < 0 || action.getBlockData() == blockData)
-                    && (handData == -1 || action.getBlockData() < 0 || action.getBlockData() == blockData)
-                    && (blockData == -1 || action.getBlockData() < 0 || action.getBlockData() == blockData)
+                    && (handDamage == -1 || action.getHandDamage() < 0 || action.getHandDamage() == handDamage)
+                    && (offhandDamage == -1 || action.getOffhandDamage() < 0 || action.getOffhandDamage() == offhandDamage)
                     && (action.getBlockDirection() == null || action.getBlockDirection() == blockDirection)
                     && (action.getSneaking() == null || action.getSneaking() == sneaking)
-                    && (action.getCancelled() == null || action.getCancelled() == cancelled)) {
+                    && (action.getCancelled() == null || action.getCancelled() == cancelled)
+                    && (blockData == null || action.getBlockData() == null || blockData.matches(action.getBlockData()))) {
                 actionList.add(action);
             }
         }
@@ -104,12 +106,12 @@ public final class RedAction extends JavaPlugin {
         for (String commandPerm : action.getCommandPermissions()) {
             perm.setPermission(replaceReplacements(commandPerm, replacements), !commandPerm.startsWith("-") && !commandPerm.startsWith("!"));
         }
-        String sendCommandFeedback = player.getWorld().getGameRuleValue("sendCommandFeedback");
+        Boolean sendCommandFeedback = player.getWorld().getGameRuleValue(GameRule.SEND_COMMAND_FEEDBACK);
         try {
             if (action.isCommandsAsOperator() && !wasOp) {
                 player.setOp(true);
             }
-            player.getWorld().setGameRuleValue("sendCommandFeedback", String.valueOf(action.isOutputShown()));
+            player.getWorld().setGameRule(GameRule.SEND_COMMAND_FEEDBACK, action.isOutputShown());
             for (String command : action.getCommands()) {
                 player.getServer().dispatchCommand(action.isCommandsAsConsole() ? getServer().getConsoleSender() : player,
                         replaceReplacements(command, replacements));
@@ -119,7 +121,7 @@ public final class RedAction extends JavaPlugin {
                 player.setOp(false);
             }
             player.removeAttachment(perm);
-            player.getWorld().setGameRuleValue("sendCommandFeedback", sendCommandFeedback);
+            player.getWorld().setGameRule(GameRule.SEND_COMMAND_FEEDBACK, sendCommandFeedback != null ? sendCommandFeedback : true);
         }
     }
 

@@ -3,8 +3,10 @@ package de.redstoneworld.redaction;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.EntityType;
 
@@ -17,14 +19,14 @@ public class Action {
     private final String name;
 
     private final Material clickedBlock;
-    private final int blockData;
+    private final BlockData blockData;
     private final BlockFace blockDirection;
     private final EntityType clickedEntity;
     private final Boolean isClickedEntityBaby;
     private final Material handItem;
-    private final int handData;
+    private final int handDamage;
     private final Material offhandItem;
-    private final int offhandData;
+    private final int offhandDamage;
 
     private final List<String> commands;
     private final List<String> commandPermissions;
@@ -49,7 +51,7 @@ public class Action {
         if (config.contains("clicked-block", true)) {
             clickedBlock = Material.valueOf(config.getString("clicked-block", "NULL").toUpperCase());
         }
-        int blockData = config.getInt("block-data", -1);
+        BlockData blockData = Bukkit.createBlockData(clickedBlock, config.getString("states", config.getString("block-data", "")));
         EntityType clickedEntity = null;
         if (config.contains("clicked-entity", true)) {
             clickedEntity = EntityType.valueOf(config.getString("clicked-entity", "NULL").toUpperCase());
@@ -59,12 +61,12 @@ public class Action {
         if (config.contains("hand-item", true)) {
             handItem = Material.valueOf(config.getString("hand-item", "NULL").toUpperCase());
         }
-        int handData = config.getInt("hand-data", -1);
+        int handDamage = config.getInt("hand-damage", config.getInt("hand-data", -1));
         Material offhandItem = null;
         if (config.contains("offhand-item", true)) {
             offhandItem = Material.valueOf(config.getString("offhand-item", "NULL").toUpperCase());
         }
-        int offhandData = config.getInt("offhand-data", -1);
+        int offhandDamage = config.getInt("offhand-damage", config.getInt("offhand-data", -1));
 
         // Legacy support
         if (config.contains("object", true)) {
@@ -72,13 +74,15 @@ public class Action {
             String condition = config.getString("condition", null);
             if ("hand".equalsIgnoreCase(condition)) {
                 handItem = object;
-                handData = config.getInt("damage", -1);
+                handDamage = config.getInt("damage", -1);
             } else if ("offhand".equalsIgnoreCase(condition)) {
                 offhandItem = object;
-                offhandData = config.getInt("damage", -1);
+                offhandDamage = config.getInt("damage", -1);
             } else if ("block".equalsIgnoreCase(condition)) {
                 clickedBlock = object;
-                blockData = config.getInt("damage", -1);
+                if (config.isSet("damage")) {
+                    throw new IllegalArgumentException("Block damage values are no longer supported! Use the 'states' setting.");
+                }
             }
         }
 
@@ -86,9 +90,9 @@ public class Action {
         this.blockData = blockData;
         this.clickedEntity = clickedEntity;
         this.handItem = handItem;
-        this.handData = handData;
+        this.handDamage = handDamage;
         this.offhandItem = offhandItem;
-        this.offhandData = offhandData;
+        this.offhandDamage = offhandDamage;
         this.commands = config.getStringList("commands");
         this.commandPermissions = config.getStringList("command-permissions");
         this.commandsAsOperator = config.getBoolean("command-as-operator", true);
