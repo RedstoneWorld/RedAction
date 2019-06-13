@@ -1,16 +1,26 @@
 package de.redstoneworld.redaction;
 
+import com.destroystokyo.paper.MaterialTags;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.Tag;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.EntityType;
 
+import java.lang.reflect.Field;
+import java.util.Collection;
+import java.util.EnumMap;
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.regex.Pattern;
 
 @Getter
 @EqualsAndHashCode
@@ -18,14 +28,13 @@ import java.util.List;
 public class Action {
     private final String name;
 
-    private final Material clickedBlock;
-    private final BlockData blockData;
+    private final Map<Material, BlockData> clickedBlocks = new EnumMap<>(Material.class);
     private final BlockFace blockDirection;
     private final EntityType clickedEntity;
     private final Boolean isClickedEntityBaby;
-    private final Material handItem;
+    private final Set<Material> handItems = EnumSet.noneOf(Material.class);
     private final int handDamage;
-    private final Material offhandItem;
+    private final Set<Material> offhandItems = EnumSet.noneOf(Material.class);
     private final int offhandDamage;
 
     private final List<String> commands;
@@ -47,24 +56,23 @@ public class Action {
     public Action(String name, ConfigurationSection config) throws IllegalArgumentException {
         this.name = name;
 
-        Material clickedBlock = null;
+        String blockData = config.getString("states", config.getString("block-data", ""));
         if (config.contains("clicked-block", true)) {
-            clickedBlock = Material.valueOf(config.getString("clicked-block", "NULL").toUpperCase());
+            for (Material material : getMaterials(config.getString("clicked-block", "NULL"))) {
+                clickedBlocks.put(material, material.createBlockData(blockData));
+            }
         }
-        BlockData blockData = Bukkit.createBlockData(clickedBlock, config.getString("states", config.getString("block-data", "")));
         EntityType clickedEntity = null;
         if (config.contains("clicked-entity", true)) {
             clickedEntity = EntityType.valueOf(config.getString("clicked-entity", "NULL").toUpperCase());
         }
         isClickedEntityBaby = (Boolean) config.get("entity-is-baby", null);
-        Material handItem = null;
         if (config.contains("hand-item", true)) {
-            handItem = Material.valueOf(config.getString("hand-item", "NULL").toUpperCase());
+            handItems.addAll(getMaterials(config.getString("hand-item", "NULL")));
         }
         int handDamage = config.getInt("hand-damage", config.getInt("hand-data", -1));
-        Material offhandItem = null;
         if (config.contains("offhand-item", true)) {
-            offhandItem = Material.valueOf(config.getString("offhand-item", "NULL").toUpperCase());
+            offhandItems.addAll(getMaterials(config.getString("offhand-item", "NULL")));
         }
         int offhandDamage = config.getInt("offhand-damage", config.getInt("offhand-data", -1));
 
@@ -73,25 +81,20 @@ public class Action {
             Material object = Material.valueOf(config.getString("object", "NULL").toUpperCase());
             String condition = config.getString("condition", null);
             if ("hand".equalsIgnoreCase(condition)) {
-                handItem = object;
+                handItems.add(object);
                 handDamage = config.getInt("damage", -1);
             } else if ("offhand".equalsIgnoreCase(condition)) {
-                offhandItem = object;
+                offhandItems.add(object);
                 offhandDamage = config.getInt("damage", -1);
             } else if ("block".equalsIgnoreCase(condition)) {
-                clickedBlock = object;
+                clickedBlocks.put(object, object.createBlockData());
                 if (config.isSet("damage")) {
                     throw new IllegalArgumentException("Block damage values are no longer supported! Use the 'states' setting.");
                 }
             }
         }
-
-        this.clickedBlock = clickedBlock;
-        this.blockData = blockData;
         this.clickedEntity = clickedEntity;
-        this.handItem = handItem;
         this.handDamage = handDamage;
-        this.offhandItem = offhandItem;
         this.offhandDamage = offhandDamage;
         this.commands = config.getStringList("commands");
         this.commandPermissions = config.getStringList("command-permissions");
@@ -111,5 +114,46 @@ public class Action {
         this.cancel = config.getBoolean("cancel", false);
         this.sneaking = (Boolean) config.get("sneaking", null);
         this.cancelled = (Boolean) config.get("cancelled", null);
+    }
+
+    private static Collection<? extends Material> getMaterials(String blockStr) {
+        Set<Material> materials = EnumSet.noneOf(Material.class);
+        for (String s : blockStr.toUpperCase().split(",")) {
+            if (s.startsWith("tag=")) {
+                String nameSpace = NamespacedKey.MINECRAFT;
+                String tagName = s.substring(4);
+                String[] parts = tagName.split(":");
+                if (parts.length == 2) {
+                    nameSpace = parts[0].toLowerCase();
+                    tagName = parts[1].toLowerCase();
+                }
+                Tag<Material> tag = Bukkit.getTag(Tag.REGISTRY_BLOCKS, new NamespacedKey(nameSpace, tagName), Material.class);
+                if (tag == null) {
+                    tag = Bukkit.getTag(Tag.REGISTRY_ITEMS, new NamespacedKey(nameSpace, tagName), Material.class);
+                }
+                if (tag == null) {
+                    try {
+                        Field field = MaterialTags.class.getField(tagName);
+                        tag = (Tag<Material>) field.get(null);
+                    } catch (NoSuchFieldException | IllegalAccessException e) {
+                        throw new IllegalArgumentException(e.getMessage());
+                    }
+                }
+
+                if (tag != null) {
+                    materials.addAll(tag.getValues());
+                }
+            } else if (s.startsWith("r=") || s.contains("*")) {
+                Pattern p = Pattern.compile(s.startsWith("r=") ? s.substring(2) : s.replace("*", "(.*)"));
+                for (Material material : Material.values()) {
+                    if (p.matcher(material.name()).matches()) {
+                        materials.add(material);
+                    }
+                }
+            } else {
+                materials.add(Material.valueOf(s));
+            }
+        }
+        return materials;
     }
 }

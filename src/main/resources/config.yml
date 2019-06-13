@@ -74,6 +74,10 @@ elements:
     offhand-damage: 0
 #   The block that the player clicked
 #   Don't define this to allow any block, use AIR if he should not have clicked a block
+#   Supports lists of materials (e.g. stone,dirt), wildcards (with *), regexes (with the r= prefix)
+#   and tags (with tag= prefix, see https://papermc.io/javadocs/paper/1.13/org/bukkit/Tag.html
+#   and https://papermc.io/javadocs/paper/1.13/com/destroystokyo/paper/MaterialTags.html
+#   All different definitions (direct material names, wildcards, regexes and tags) can be chained with commas
     clicked-block: trapped_chest
 #   The states of the clicked block. Only the ones specified get matched.
 #   Leave empty to allow all. Possible values: https://minecraft.gamepedia.com/Block_states

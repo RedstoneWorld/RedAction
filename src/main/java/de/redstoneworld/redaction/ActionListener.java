@@ -97,13 +97,13 @@ public class ActionListener implements Listener {
                 Map<String, String> replacements = new HashMap<>();
                 replacements.put("player", player.getName());
                 replacements.put("click", action.getClick().toString());
-                replacements.put("block", String.valueOf(action.getClickedBlock()));
-                replacements.put("blockdata", action.getBlockData().getAsString(true));
-                replacements.put("states", action.getBlockData().getAsString(true));
+                replacements.put("block", clickedBlock != null ? String.valueOf(clickedBlock.getType()) : "");
+                replacements.put("blockdata", clickedBlock != null ? action.getClickedBlocks().get(clickedBlock.getType()).getAsString(true) : "");
+                replacements.put("states", clickedBlock != null ? action.getClickedBlocks().get(clickedBlock.getType()).getAsString(true) : "");
                 replacements.put("entity", String.valueOf(action.getClickedEntity()));
                 replacements.put("isbaby", String.valueOf(action.getIsClickedEntityBaby()));
-                replacements.put("hand", String.valueOf(action.getHandItem()));
-                replacements.put("offhand", String.valueOf(action.getOffhandItem()));
+                replacements.put("hand", action.getHandItems().isEmpty() ? "" : String.valueOf(player.getEquipment().getItemInMainHand().getType()));
+                replacements.put("offhand", action.getOffhandItems().isEmpty() ? "" : String.valueOf(player.getEquipment().getItemInOffHand().getType()));
                 replacements.put("world", player.getWorld().getName());
                 Location playerLocation = player.getLocation();
                 Location playerEyeLocation = player.getEyeLocation();

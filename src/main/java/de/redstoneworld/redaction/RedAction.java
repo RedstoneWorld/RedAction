@@ -75,17 +75,17 @@ public final class RedAction extends JavaPlugin {
         for (Action action : actions) {
             if (action != null
                     && (action.getClick() == null || action.getClick() == click)
-                    && (action.getClickedBlock() == null || action.getClickedBlock() == clickedBlock)
+                    && (action.getClickedBlocks().isEmpty() || action.getClickedBlocks().containsKey(clickedBlock))
                     && (action.getClickedEntity() == null || action.getClickedEntity() == entityType)
                     && (action.getClickedEntity() == null || entityType == null || action.getIsClickedEntityBaby() == null || action.getIsClickedEntityBaby() == baby)
-                    && (action.getHandItem() == null || action.getHandItem() == handItem)
-                    && (action.getOffhandItem() == null || action.getOffhandItem() == offhandItem)
+                    && (action.getHandItems().isEmpty() || action.getHandItems().contains(handItem))
+                    && (action.getOffhandItems().isEmpty() || action.getOffhandItems().contains(offhandItem))
                     && (handDamage == -1 || action.getHandDamage() < 0 || action.getHandDamage() == handDamage)
                     && (offhandDamage == -1 || action.getOffhandDamage() < 0 || action.getOffhandDamage() == offhandDamage)
                     && (action.getBlockDirection() == null || action.getBlockDirection() == blockDirection)
                     && (action.getSneaking() == null || action.getSneaking() == sneaking)
                     && (action.getCancelled() == null || action.getCancelled() == cancelled)
-                    && (blockData == null || action.getBlockData() == null || blockData.matches(action.getBlockData()))) {
+                    && (blockData == null || action.getClickedBlocks().isEmpty() || blockData.matches(action.getClickedBlocks().get(clickedBlock)))) {
                 actionList.add(action);
             }
         }
