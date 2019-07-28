@@ -98,8 +98,10 @@ public class ActionListener implements Listener {
                 replacements.put("player", player.getName());
                 replacements.put("click", action.getClick().toString());
                 replacements.put("block", clickedBlock != null ? String.valueOf(clickedBlock.getType()) : "");
-                replacements.put("blockdata", clickedBlock != null ? action.getClickedBlocks().get(clickedBlock.getType()).getAsString(true) : "");
-                replacements.put("states", clickedBlock != null ? action.getClickedBlocks().get(clickedBlock.getType()).getAsString(true) : "");
+                String data = clickedBlock != null && action.getClickedBlocks().containsKey(clickedBlock.getType())
+                        ? action.getClickedBlocks().get(clickedBlock.getType()).getAsString(true) : "";
+                replacements.put("blockdata", data);
+                replacements.put("states", data);
                 replacements.put("entity", String.valueOf(action.getClickedEntity()));
                 replacements.put("isbaby", String.valueOf(action.getIsClickedEntityBaby()));
                 replacements.put("hand", action.getHandItems().isEmpty() ? "" : String.valueOf(player.getEquipment().getItemInMainHand().getType()));
