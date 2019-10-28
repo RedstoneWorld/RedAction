@@ -70,10 +70,6 @@ public class ActionListener implements Listener {
 
         PlayerInventory playerInventory = player.getInventory();
         BlockData blockData = clickedBlock != null ? clickedBlock.getState(false).getBlockData() : null;
-        playerInventory.getItemInMainHand();
-        playerInventory.getItemInMainHand();
-        playerInventory.getItemInOffHand();
-        playerInventory.getItemInOffHand();
         List<Action> actions = plugin.getActions(
                 click,
                 clickedBlock != null ? clickedBlock.getType() : Material.AIR,
