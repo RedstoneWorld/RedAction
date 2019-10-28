@@ -1,6 +1,7 @@
 package de.redstoneworld.redaction;
 
 import com.destroystokyo.paper.MaterialTags;
+import de.redstoneworld.redaction.utils.ObjectIndex.Index;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
@@ -28,13 +29,27 @@ import java.util.regex.Pattern;
 public class Action {
     private final String name;
 
-    private final Map<Material, BlockData> clickedBlocks = new EnumMap<>(Material.class);
-    private final BlockFace blockDirection;
+    @Index
+    private final ClickType click;
+    @Index
+    private final Boolean sneaking;
+    @Index
+    private final Boolean cancelled;
+    @Index
     private final EntityType clickedEntity;
+    @Index
     private final Boolean isClickedEntityBaby;
+    @Index
+    private final Map<Material, BlockData> clickedBlocks = new EnumMap<>(Material.class);
+    @Index
+    private final BlockFace blockDirection;
+    @Index
     private final Set<Material> handItems = EnumSet.noneOf(Material.class);
+    @Index
     private final int handDamage;
+    @Index
     private final Set<Material> offhandItems = EnumSet.noneOf(Material.class);
+    @Index
     private final int offhandDamage;
 
     private final List<String> commands;
@@ -42,10 +57,7 @@ public class Action {
     private final boolean commandsAsOperator;
     private final boolean commandsAsConsole;
     private final boolean outputShown;
-    private final ClickType click;
     private final boolean cancel;
-    private final Boolean sneaking;
-    private final Boolean cancelled;
 
     /**
      * Create a new action from the config

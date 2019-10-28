@@ -1,5 +1,6 @@
 package de.redstoneworld.redaction;
 
+import de.redstoneworld.redaction.utils.ObjectIndex;
 import org.bukkit.ChatColor;
 import org.bukkit.GameRule;
 import org.bukkit.Material;
@@ -24,6 +25,7 @@ public final class RedAction extends JavaPlugin {
 
     private List<Action> actions;
     private boolean debug;
+    private ObjectIndex<Action> index;
 
     @Override
     public void onEnable() {
@@ -48,6 +50,10 @@ public final class RedAction extends JavaPlugin {
                 getLogger().log(Level.WARNING, "Action " + actionName + " has an invalid config! " + e.getMessage());
             }
         }
+        getLogger().log(Level.INFO, "Loading " + actions.size() + " actions into index...");
+        index = new ObjectIndex<>(actions, Action.class);
+        index.registerMatcher(BlockData.class, (a, b) -> a != null && a.matches(b));
+        getLogger().log(Level.INFO, "Loadd " + actions.size() + " actions into index!");
     }
 
     private void registerAction(Action action) {
@@ -69,8 +75,24 @@ public final class RedAction extends JavaPlugin {
         return false;
     }
 
-    public List<Action> getActions(ClickType click, Material clickedBlock, BlockData blockData, BlockFace blockDirection, EntityType entityType, Boolean baby, Material handItem, int handDamage, Material offhandItem, int offhandDamage, boolean sneaking, boolean cancelled) {
-        List<Action> actionList = new ArrayList<>();
+    public List<Action> getActions(ClickType click, Material clickedBlock, BlockData blockData, BlockFace blockDirection,
+                                   EntityType entityType, Boolean baby, Material handItem, int handDamage, Material offhandItem,
+                                   int offhandDamage, boolean sneaking, boolean cancelled) {
+        return index.select(
+                click,
+                sneaking,
+                cancelled,
+                entityType,
+                baby,
+                clickedBlock,
+                blockData,
+                blockDirection,
+                handItem,
+                handDamage,
+                offhandItem,
+                offhandDamage
+        );
+        /*List<Action> actionList = new ArrayList<>();
 
         for (Action action : actions) {
             if (action != null
@@ -90,7 +112,7 @@ public final class RedAction extends JavaPlugin {
             }
         }
 
-        return actionList;
+        return actionList;*/
     }
 
     /**
