@@ -2,13 +2,9 @@ package de.redstoneworld.redaction;
 
 import org.bukkit.ChatColor;
 import org.bukkit.GameRule;
-import org.bukkit.Material;
-import org.bukkit.block.BlockFace;
-import org.bukkit.block.data.BlockData;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionAttachment;
@@ -69,23 +65,24 @@ public final class RedAction extends JavaPlugin {
         return false;
     }
 
-    public List<Action> getActions(ClickType click, Material clickedBlock, BlockData blockData, BlockFace blockDirection, EntityType entityType, Boolean baby, Material handItem, int handDamage, Material offhandItem, int offhandDamage, boolean sneaking, boolean cancelled) {
+    public List<Action> getActions(ClickEventData data, boolean cancelActions) {
         List<Action> actionList = new ArrayList<>();
 
         for (Action action : actions) {
             if (action != null
-                    && (action.getClick() == null || action.getClick() == click)
-                    && (action.getClickedBlocks().isEmpty() || action.getClickedBlocks().containsKey(clickedBlock))
-                    && (action.getClickedEntity() == null || action.getClickedEntity() == entityType)
-                    && (action.getClickedEntity() == null || entityType == null || action.getIsClickedEntityBaby() == null || action.getIsClickedEntityBaby() == baby)
-                    && (action.getHandItems().isEmpty() || action.getHandItems().contains(handItem))
-                    && (action.getOffhandItems().isEmpty() || action.getOffhandItems().contains(offhandItem))
-                    && (handDamage == -1 || action.getHandDamage() < 0 || action.getHandDamage() == handDamage)
-                    && (offhandDamage == -1 || action.getOffhandDamage() < 0 || action.getOffhandDamage() == offhandDamage)
-                    && (action.getBlockDirection() == null || action.getBlockDirection() == blockDirection)
-                    && (action.getSneaking() == null || action.getSneaking() == sneaking)
-                    && (action.getCancelled() == null || action.getCancelled() == cancelled)
-                    && (blockData == null || action.getClickedBlocks().isEmpty() || blockData.matches(action.getClickedBlocks().get(clickedBlock)))) {
+                    && action.isCancel() == cancelActions
+                    && (action.getClick() == null || action.getClick() == data.getClick())
+                    && (action.getClickedBlocks().isEmpty() || action.getClickedBlocks().containsKey(data.getClickedMaterial()))
+                    && (action.getClickedEntity() == null || action.getClickedEntity() == data.getEntityType())
+                    && (action.getClickedEntity() == null || data.getEntityType() == null || action.getIsClickedEntityBaby() == null || action.getIsClickedEntityBaby() == data.isBaby())
+                    && (action.getHandItems().isEmpty() || action.getHandItems().contains(data.getHandItem()))
+                    && (action.getOffhandItems().isEmpty() || action.getOffhandItems().contains(data.getOffhandItem()))
+                    && (data.getHandDamage() == -1 || action.getHandDamage() < 0 || action.getHandDamage() == data.getHandDamage())
+                    && (data.getOffhandDamage() == -1 || action.getOffhandDamage() < 0 || action.getOffhandDamage() == data.getOffhandDamage())
+                    && (action.getBlockDirection() == null || action.getBlockDirection() == data.getClickedDirection())
+                    && (action.getSneaking() == null || action.getSneaking() == data.isSneaking())
+                    && (action.getCancelled() == null || action.getCancelled() == data.isCancelled())
+                    && (data.getClickedData() == null || action.getClickedBlocks().isEmpty() || data.getClickedData().matches(action.getClickedBlocks().get(data.getClickedMaterial())))) {
                 actionList.add(action);
             }
         }

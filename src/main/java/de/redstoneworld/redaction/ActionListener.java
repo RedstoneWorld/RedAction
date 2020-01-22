@@ -70,12 +70,19 @@ public class ActionListener implements Listener {
 
         PlayerInventory playerInventory = player.getInventory();
         BlockData blockData = clickedBlock != null ? clickedBlock.getState(false).getBlockData() : null;
-        List<Action> actions = plugin.getActions(
+        ClickEventData data = new ClickEventData(
                 click,
-                clickedBlock != null ? clickedBlock.getType() : Material.AIR,
+                clickedBlock != null
+                        ? clickedBlock.getLocation()
+                        : clickedEntity != null
+                                ? clickedEntity.getLocation()
+                                : null,
+                blockData instanceof Directional
+                        ? ((Directional) blockData).getFacing()
+                        : clickedEntity instanceof Attachable
+                                ? ((org.bukkit.material.Directional) clickedEntity).getFacing()
+                                : null, clickedBlock != null ? clickedBlock.getType() : Material.AIR,
                 blockData,
-                blockData instanceof Directional ? ((Directional) blockData).getFacing()
-                        : clickedEntity instanceof Attachable ? ((org.bukkit.material.Directional) clickedEntity).getFacing() : null,
                 clickedEntity != null ? clickedEntity.getType() : null,
                 clickedEntity != null ? (clickedEntity instanceof Ageable && !((Ageable) clickedEntity).isAdult()) : null,
                 playerInventory.getItemInMainHand().getType(),
@@ -87,17 +94,29 @@ public class ActionListener implements Listener {
                 player.isSneaking(),
                 event.isCancelled()
         );
+        List<Action> actions = plugin.getActions(data, true);
+        if (handleActions(player, actions, data)) {
+            event.setCancelled(true);
+        }
+        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
+            List<Action> notCancelledActions = plugin.getActions(data, false);
+            player.getServer().getScheduler().runTask(plugin, () -> {
+                handleActions(player, notCancelledActions, data);
+            });
+        });
+    }
 
+    private boolean handleActions(Player player, List<Action> actions, ClickEventData data) {
+        boolean cancel = false;
         for (Action action : actions) {
             if (player.hasPermission("rwm.redaction.actions." + action.getName().toLowerCase())) {
                 Map<String, String> replacements = new HashMap<>();
                 replacements.put("player", player.getName());
                 replacements.put("click", action.getClick().toString());
-                replacements.put("block", clickedBlock != null ? String.valueOf(clickedBlock.getType()) : "");
-                String data = clickedBlock != null && action.getClickedBlocks().containsKey(clickedBlock.getType())
-                        ? action.getClickedBlocks().get(clickedBlock.getType()).getAsString(true) : "";
-                replacements.put("blockdata", data);
-                replacements.put("states", data);
+                replacements.put("block", String.valueOf(data.getClickedMaterial()));
+                String d = action.getClickedBlocks().get(data.getClickedMaterial()).getAsString(true);
+                replacements.put("blockdata", d);
+                replacements.put("states", d);
                 replacements.put("entity", String.valueOf(action.getClickedEntity()));
                 replacements.put("isbaby", String.valueOf(action.getIsClickedEntityBaby()));
                 replacements.put("hand", action.getHandItems().isEmpty() ? "" : String.valueOf(player.getEquipment().getItemInMainHand().getType()));
@@ -116,17 +135,14 @@ public class ActionListener implements Listener {
                 replacements.put("exactyaw", String.valueOf(playerEyeLocation.getYaw()));
                 replacements.put("exactpitch", String.valueOf(playerEyeLocation.getPitch()));
 
-                if (clickedBlock != null) {
-                    Location blockLocation = clickedBlock.getLocation();
+                if (data.getClickedMaterial() != Material.AIR) {
+                    Location blockLocation = data.getClickedLocation();
                     replacements.put("blockx", String.valueOf(blockLocation.getBlockX()));
                     replacements.put("blocky", String.valueOf(blockLocation.getBlockY()));
                     replacements.put("blockz", String.valueOf(blockLocation.getBlockZ()));
-                    if (clickedBlock.getState().getData() instanceof Directional) {
-                        replacements.put("direction", ((Directional) clickedBlock.getState().getData()).getFacing().toString());
-                    }
                 }
-                if (clickedEntity != null) {
-                    Location entityLocation = clickedEntity.getLocation();
+                if (data.getEntityType() != null) {
+                    Location entityLocation = data.getClickedLocation();
                     replacements.put("entityx", String.valueOf(entityLocation.getBlockX()));
                     replacements.put("entityy", String.valueOf(entityLocation.getBlockY()));
                     replacements.put("entityz", String.valueOf(entityLocation.getBlockZ()));
@@ -137,16 +153,17 @@ public class ActionListener implements Listener {
                     replacements.put("entityexactz", String.valueOf(entityLocation.getZ()));
                     replacements.put("entityexactyaw", String.valueOf(entityLocation.getYaw()));
                     replacements.put("entityexactpitch", String.valueOf(entityLocation.getPitch()));
-                    if (clickedEntity instanceof Directional) {
-                        replacements.put("direction", ((Directional) clickedEntity).getFacing().toString());
-                    }
+                }
+                if (data.getClickedDirection() != null) {
+                    replacements.put("direction", data.getClickedDirection().toString());
                 }
 
                 plugin.execute(action, player, replacements);
                 if (action.isCancel()) {
-                    event.setCancelled(true);
+                    cancel = true;
                 }
             }
         }
+        return cancel;
     }
 }
