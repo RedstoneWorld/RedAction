@@ -82,6 +82,14 @@ public final class RedAction extends JavaPlugin {
         return false;
     }
 
+    public List<Action> getCachedActions(ClickEventData data, boolean cancelActions) {
+        Cache<Integer, List<Action>> cache = cancelActions ? cancelActionCache : noCancelActionCache;
+        if (cache != null) {
+            return cache.getIfPresent(data.hashCode());
+        }
+        return null;
+    }
+
     public List<Action> getActions(ClickEventData data, boolean cancelActions) {
         Cache<Integer, List<Action>> cache = cancelActions ? cancelActionCache : noCancelActionCache;
         if (cache != null) {

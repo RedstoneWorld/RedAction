@@ -99,8 +99,12 @@ public class ActionListener implements Listener {
         if (handleActions(player, actions, data)) {
             event.setCancelled(true);
         }
+        List<Action> notCancelledCachedActions = plugin.getCachedActions(data, false);
+        if (notCancelledCachedActions != null && notCancelledCachedActions.isEmpty()) {
+            return;
+        }
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
-            List<Action> notCancelledActions = plugin.getActions(data, false);
+            List<Action> notCancelledActions = notCancelledCachedActions != null ? notCancelledCachedActions : plugin.getActions(data, false);
             player.getServer().getScheduler().runTask(plugin, () -> {
                 handleActions(player, notCancelledActions, data);
             });
