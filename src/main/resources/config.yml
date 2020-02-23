@@ -1,4 +1,8 @@
 debug: false
+# Duration in minutes an action filter result stays in the cache after access
+expire-durations:
+  cancel-cache: 30
+  non-cancel-cache: 30
 actions:
 # <Action-Name, zum Beispiel: "B12" oder "Test">
   default-action:

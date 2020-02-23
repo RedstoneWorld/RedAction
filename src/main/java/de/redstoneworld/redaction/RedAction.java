@@ -1,5 +1,7 @@
 package de.redstoneworld.redaction;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.GameRule;
 import org.bukkit.command.Command;
@@ -14,9 +16,13 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
 public final class RedAction extends JavaPlugin {
+
+    private Cache<Integer, List<Action>> cancelActionCache;
+    private Cache<Integer, List<Action>> noCancelActionCache;
 
     private List<Action> actions;
     private boolean debug;
@@ -33,6 +39,17 @@ public final class RedAction extends JavaPlugin {
         reloadConfig();
 
         debug = getConfig().getBoolean("debug");
+
+        if (getConfig().getInt("expire-durations.cancel-cache") > 0) {
+            cancelActionCache = CacheBuilder.newBuilder().expireAfterAccess(getConfig().getInt("expire-durations.cancel-cache"), TimeUnit.MINUTES).build();
+        } else {
+            cancelActionCache = null;
+        }
+        if (getConfig().getInt("expire-durations.no-cancel-cache") > 0) {
+            noCancelActionCache = CacheBuilder.newBuilder().expireAfterAccess(getConfig().getInt("expire-durations.no-cancel-cache"), TimeUnit.MINUTES).build();
+        } else {
+            noCancelActionCache = null;
+        }
 
         actions = new ArrayList<>();
 
@@ -66,6 +83,13 @@ public final class RedAction extends JavaPlugin {
     }
 
     public List<Action> getActions(ClickEventData data, boolean cancelActions) {
+        Cache<Integer, List<Action>> cache = cancelActions ? cancelActionCache : noCancelActionCache;
+        if (cache != null) {
+            List<Action> actionList = cache.getIfPresent(data.hashCode());
+            if (actionList != null) {
+                return actionList;
+            }
+        }
         List<Action> actionList = new ArrayList<>();
 
         for (Action action : actions) {
@@ -85,6 +109,10 @@ public final class RedAction extends JavaPlugin {
                     && (data.getClickedData() == null || action.getClickedBlocks().isEmpty() || data.getClickedData().matches(action.getClickedBlocks().get(data.getClickedMaterial())))) {
                 actionList.add(action);
             }
+        }
+
+        if (cache != null) {
+            cache.put(data.hashCode(), actionList);
         }
 
         return actionList;
