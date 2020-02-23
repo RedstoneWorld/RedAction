@@ -77,12 +77,13 @@ public class ActionListener implements Listener {
                         : clickedEntity != null
                                 ? clickedEntity.getLocation()
                                 : null,
+                clickedBlock != null ? clickedBlock.getType() : Material.AIR,
+                blockData,
                 blockData instanceof Directional
                         ? ((Directional) blockData).getFacing()
                         : clickedEntity instanceof Attachable
-                                ? ((org.bukkit.material.Directional) clickedEntity).getFacing()
-                                : null, clickedBlock != null ? clickedBlock.getType() : Material.AIR,
-                blockData,
+                        ? ((org.bukkit.material.Directional) clickedEntity).getFacing()
+                        : null,
                 clickedEntity != null ? clickedEntity.getType() : null,
                 clickedEntity != null ? (clickedEntity instanceof Ageable && !((Ageable) clickedEntity).isAdult()) : null,
                 playerInventory.getItemInMainHand().getType(),

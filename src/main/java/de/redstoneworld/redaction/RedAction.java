@@ -74,7 +74,7 @@ public final class RedAction extends JavaPlugin {
                     && (action.getClick() == null || action.getClick() == data.getClick())
                     && (action.getClickedBlocks().isEmpty() || action.getClickedBlocks().containsKey(data.getClickedMaterial()))
                     && (action.getClickedEntity() == null || action.getClickedEntity() == data.getEntityType())
-                    && (action.getClickedEntity() == null || data.getEntityType() == null || action.getIsClickedEntityBaby() == null || action.getIsClickedEntityBaby() == data.isBaby())
+                    && (action.getClickedEntity() == null || data.getEntityType() == null || action.getIsClickedEntityBaby() == null || action.getIsClickedEntityBaby() == data.getIsBaby())
                     && (action.getHandItems().isEmpty() || action.getHandItems().contains(data.getHandItem()))
                     && (action.getOffhandItems().isEmpty() || action.getOffhandItems().contains(data.getOffhandItem()))
                     && (data.getHandDamage() == -1 || action.getHandDamage() < 0 || action.getHandDamage() == data.getHandDamage())
