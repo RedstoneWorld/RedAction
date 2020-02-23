@@ -114,7 +114,7 @@ public class ActionListener implements Listener {
                 replacements.put("player", player.getName());
                 replacements.put("click", action.getClick().toString());
                 replacements.put("block", String.valueOf(data.getClickedMaterial()));
-                String d = action.getClickedBlocks().get(data.getClickedMaterial()).getAsString(true);
+                String d = action.getClickedBlocks().containsKey(data.getClickedMaterial()) ? action.getClickedBlocks().get(data.getClickedMaterial()).getAsString(true) : "";
                 replacements.put("blockdata", d);
                 replacements.put("states", d);
                 replacements.put("entity", String.valueOf(action.getClickedEntity()));
