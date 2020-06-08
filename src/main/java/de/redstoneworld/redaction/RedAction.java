@@ -61,6 +61,7 @@ public final class RedAction extends JavaPlugin {
                 getLogger().log(Level.WARNING, "Action " + actionName + " has an invalid config! " + e.getMessage());
             }
         }
+        getLogger().log(Level.INFO, "Registered " + actions.size() + " actions!");
     }
 
     private void registerAction(Action action) {
@@ -68,7 +69,7 @@ public final class RedAction extends JavaPlugin {
         try {
             getServer().getPluginManager().addPermission(new Permission("rwm.redaction.actions." + action.getName().toLowerCase(), PermissionDefault.FALSE));
         } catch (IllegalArgumentException ignored) {}
-        getLogger().log(Level.INFO, "Registered " + action);
+        logDebug("Registered " + action);
     }
 
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
