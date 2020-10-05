@@ -8,6 +8,7 @@ actions:
   default-action:
 #   Anzahl an Befehle nicht begrenzt, in selber Reihenfolge wie angebene ausgeführt und mit allen Rechten
 #   Kann folgende Variablen enthalten:
+#   %ra-random% - Long value unique to each execution
 #   %world% - Name der Welt
 #   %x% - X position des Spielers (ohne Nachkommastellen)
 #   %y% - y position des Spielers (ohne Nachkommastellen)

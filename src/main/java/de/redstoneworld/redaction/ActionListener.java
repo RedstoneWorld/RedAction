@@ -23,9 +23,11 @@ import org.bukkit.material.Attachable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 public class ActionListener implements Listener {
     private final RedAction plugin;
+    private static final Random RANDOM = new Random();
 
     public ActionListener(RedAction plugin) {
         this.plugin = plugin;
@@ -116,6 +118,7 @@ public class ActionListener implements Listener {
         for (Action action : actions) {
             if (player.hasPermission("rwm.redaction.actions." + action.getName().toLowerCase())) {
                 Map<String, String> replacements = new HashMap<>();
+                replacements.put("ra-random", String.valueOf(RANDOM.nextLong()));
                 replacements.put("player", player.getName());
                 replacements.put("click", action.getClick().toString());
                 replacements.put("block", String.valueOf(data.getClickedMaterial()));
