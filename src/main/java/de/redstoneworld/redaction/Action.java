@@ -1,26 +1,17 @@
 package de.redstoneworld.redaction;
 
-import com.destroystokyo.paper.MaterialTags;
+import com.google.common.collect.Sets;
+import de.redstoneworld.redutilities.material.MaterialHelper;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
-import org.bukkit.Tag;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.EntityType;
 
-import java.lang.reflect.Field;
-import java.util.Collection;
-import java.util.EnumMap;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.regex.Pattern;
+import java.util.*;
 
 @Getter
 @EqualsAndHashCode
@@ -117,43 +108,6 @@ public class Action {
     }
 
     private static Collection<? extends Material> getMaterials(String blockStr) {
-        Set<Material> materials = EnumSet.noneOf(Material.class);
-        for (String s : blockStr.toUpperCase().split(",")) {
-            if (s.startsWith("tag=")) {
-                String nameSpace = NamespacedKey.MINECRAFT;
-                String tagName = s.substring(4);
-                String[] parts = tagName.split(":");
-                if (parts.length == 2) {
-                    nameSpace = parts[0].toLowerCase();
-                    tagName = parts[1].toLowerCase();
-                }
-                Tag<Material> tag = Bukkit.getTag(Tag.REGISTRY_BLOCKS, new NamespacedKey(nameSpace, tagName), Material.class);
-                if (tag == null) {
-                    tag = Bukkit.getTag(Tag.REGISTRY_ITEMS, new NamespacedKey(nameSpace, tagName), Material.class);
-                }
-                if (tag == null) {
-                    try {
-                        Field field = MaterialTags.class.getField(tagName);
-                        tag = (Tag<Material>) field.get(null);
-                    } catch (NoSuchFieldException | IllegalAccessException e) {
-                        throw new IllegalArgumentException(e.getMessage());
-                    }
-                }
-
-                if (tag != null) {
-                    materials.addAll(tag.getValues());
-                }
-            } else if (s.startsWith("r=") || s.contains("*")) {
-                Pattern p = Pattern.compile(s.startsWith("r=") ? s.substring(2) : s.replace("*", "(.*)"));
-                for (Material material : Material.values()) {
-                    if (p.matcher(material.name()).matches()) {
-                        materials.add(material);
-                    }
-                }
-            } else {
-                materials.add(Material.valueOf(s));
-            }
-        }
-        return materials;
+        return MaterialHelper.getMaterials(Sets.newHashSet(blockStr.split(",")));
     }
 }
