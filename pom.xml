@@ -20,6 +20,10 @@
 
     <repositories>
         <repository>
+            <id>redstoneworld-RedUtilities</id>
+            <url>https://dl.cloudsmith.io/public/redstoneworld/RedUtilities/maven/</url>
+        </repository>
+        <repository>
             <id>paper-repo</id>
             <url>https://papermc.io/repo/repository/maven-public/</url>
         </repository>
